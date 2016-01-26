@@ -1,0 +1,41 @@
+---
+title: "LPP Exam Times - December 7th 2015"
+author: "Eugene"
+date: "3 December 2015"
+output: pdf_document
+---
+
+These are the exam times for the LPP end of semester tests on **Monday December 7th 2015**. The test is 1 hour long and the class is divided in two to sit it. The venue is **room 116**.   
+
+
+```{r echo=F, message=F}
+setwd("C:/Academic/Science1/LPP/2015")
+library(plyr)
+library(dplyr)
+library(knitr)
+
+DNAF = read.csv2("DNAF.csv", sep=",")
+PHARMA = read.csv2("PHARMA.csv", sep=",")
+BIO = read.csv2("BIO.csv", sep=",")
+
+colnames(DNAF)[3] = "Time"
+DNAF[ceiling(dim(DNAF)[1]/2):dim(DNAF)[1],3] = "12:00"
+DNAF[1:ceiling(dim(DNAF)[1]/2),3] = "11:00"
+
+colnames(PHARMA)[3] = "Time"
+PHARMA[ceiling(dim(PHARMA)[1]/2):dim(PHARMA)[1],3] = "16:00"
+PHARMA[1:ceiling(dim(PHARMA)[1]/2),3] = "15:00"
+
+colnames(BIO)[3] = "Time"
+BIO[ceiling(dim(BIO)[1]/2):dim(BIO)[1],3] = "16:00"
+BIO[1:ceiling(dim(BIO)[1]/2),3] = "15:00"
+
+```
+
+
+
+```{r echo=F}
+kable(BIO)
+
+```
+

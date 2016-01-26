@@ -1,0 +1,103 @@
+---
+title: "Skillpad Results"
+author: "Eugene"
+date: "16th December 2015"
+output: pdf_document
+classoption: landscape
+fontsize: 8pt
+---
+
+```{r echo=F, message=F}
+library(reshape2)
+library(plyr)
+library(dplyr)
+library(knitr)
+library(xtable)
+library(chron)
+
+date=Sys.Date()
+date = as.Date(date)
+today = paste(months(date), days(date), sep=" ")
+today = paste(weekdays(date), today, sep=", ")
+```
+
+
+
+
+These are the LPP Results in skillpad up to `r today`.
+
+```{r echo=F, message=F}
+#set directory, read in data
+setwd("C:/Academic/Science1/LPP/2015")
+sp = read.csv2("skillpad-Dec16.csv", sep=",")
+
+#select just important columns
+sp = sp[,c(2, 3, 4, 7, 9, 11)]
+
+#set up a new frame to count completed lessons
+sp1 = filter(sp, Lesson.Completed =="YES")
+sp1 = sp1[, c(3,5)]
+sp1 = table(sp1)
+sp1 = as.data.frame(sp1)
+sp1 = filter(sp1, Lesson.Completed == "YES")
+sp1 = sp1[order(sp1$Username),]
+
+#put sp in wide format, replace Na with "NO", add on number of completed lessons
+sp = dcast(sp, Firstname+Lastname+Username~Lesson, value.var="Lesson.Completed")
+sp[is.na(sp)] = "NO"
+sp = sp[order(sp$Username),]
+sp = cbind(sp, sp1$Freq)
+
+#reorder and rename columns
+sp = sp[,c(1:3, 20, 4:19)]
+names = c("Firstname","Lastname", "Username", "Done",
+          "500-01", "501-01", "502-01", "305-01", "306-01", 
+          "307-01", "314-01", "700-01", "710-01", "720-01", 
+          "721-01", "730-01", "740-01", "741-01", "760-01", "761-01")
+colnames(sp)= names
+
+#order alphabetically and remove names
+sp = sp[with(sp, order(Lastname, Firstname)),]
+sp = sp[, -c(1,2)]
+
+#read in class data
+DNAF = read.csv2("DNAF.csv", sep=",")
+PHARMA = read.csv2("PHARMA.csv", sep=",")
+BIO = read.csv2("BIO.csv", sep=",")
+
+#sort by class
+data.pharma = filter(sp, sp$Username %in% PHARMA$StudentID)
+data.bio = filter(sp, sp$Username %in% BIO$StudentID)
+data.dnaf = filter(sp, sp$Username %in% DNAF$StudentID)
+
+```
+
+
+###Forensics Marks
+\scriptsize
+```{r echo=F, results = "asis"}
+
+kable(data.dnaf)
+
+```
+
+
+\newpage
+
+###Pharmaceutical Science Marks
+
+```{r echo=F}
+kable(data.pharma)
+
+```
+
+*****
+\newpage
+
+###Biology Marks
+
+```{r echo=F}
+kable(data.bio)
+
+```
+

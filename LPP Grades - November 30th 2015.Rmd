@@ -1,0 +1,78 @@
+---
+title: "LPP Results - 8th December 2015"
+author: "Eugene"
+date: "16th December 2015"
+output: pdf_document
+classoption: landscape
+---
+
+These are the LPP Results in quizzes up to date.
+
+\small
+
+```{r echo=F, message=F, warning=F}
+setwd("C:/Academic/Science1/LPP/2015")
+library(plyr)
+library(dplyr)
+library(knitr)
+
+data = read.csv2("LPP Grades.csv", sep=",")
+data = data[,-c(4,5,6)]
+
+DNAF = read.csv2("DNAF.csv", sep=",")
+PHARMA = read.csv2("PHARMA.csv", sep=",")
+BIO = read.csv2("BIO.csv", sep=",")
+
+
+names = c("First Name", "Surname", "StudentID", 
+          "01 Intro", "02 Units", "03 MSDS", "04a Moles", 
+          "04b ChemCol", "05 Dil.", "06 Conc.", "07 Meas.")
+
+data.pharma = filter(data, data$ID.number %in% PHARMA$StudentID)
+data.bio = filter(data, data$ID.number %in% BIO$StudentID)
+data.dnaf = filter(data, data$ID.number %in% DNAF$StudentID)
+
+names(data.pharma) = names
+names(data.bio) = names
+names(data.dnaf) = names
+
+data.pharma = data.pharma[,-c(1)]
+data.bio = data.bio[,-c(1)]
+data.dnaf = data.dnaf[,-c(1)]
+
+#data.dnaf$Mean = mean(data.dnaf[,(5:11)])
+#colnames(data.dnaf)[12] = "% Mark"
+#data.dnaf = data.dnaf[c(1:3, 12, 4:11),]
+
+#data.pharma[data.pharma == "-"] <- NA
+#data.bio[data.bio == "-"] <- NA
+#data.dnaf[data.dnaf == "-"] <- NA
+```
+
+
+
+
+###Forensics Marks
+
+```{r echo=F}
+kable(data.dnaf)
+
+```
+
+\newpage
+
+###Pharmaceutical Science Marks
+
+```{r echo=F}
+kable(data.pharma)
+
+```
+
+\newpage
+
+###Biology Marks
+
+```{r echo=F}
+kable(data.bio)
+
+```
